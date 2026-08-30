@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    password: "your_local_postgres_password"
+
+admin:
+  username: "admin"
+  password: "admin_password_change_me"
+
+jwt:
+  # Secret key must be at least 256 bits (32+ characters)
+  secret: "YOUR_DEV_SECRET_KEY_AT_LEAST_32_CHARACTERS_LONG_FOR_HMAC_SHA"
+  expiration: 86400000
+
+cors:
+  allowed-origins: "http://localhost:5173"
+
+openfoodfacts:
+  base-url: "https://world.openfoodfacts.org"
+  contact-email: "your_email@example.com"

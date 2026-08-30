@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: whatafridge
+  profiles:
+    active: dev
+    group:
+      dev:
+        - dev
+        - local
