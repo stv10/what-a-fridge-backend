@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/meals")
@@ -23,8 +22,8 @@ public class MealLogController {
     private final CurrentUserService currentUserService;
 
     public MealLogController(MealLogService mealLogService,
-                             UserMealService userMealService,
-                             CurrentUserService currentUserService) {
+            UserMealService userMealService,
+            CurrentUserService currentUserService) {
         this.mealLogService = mealLogService;
         this.userMealService = userMealService;
         this.currentUserService = currentUserService;
@@ -33,29 +32,27 @@ public class MealLogController {
     @GetMapping
     public List<MealLogDto> getDailyLogs(@RequestParam String date) {
         return mealLogService.getDailyLogs(
-            currentUserService.getCurrentUserId(), 
-            LocalDate.parse(date)
-        );
+                currentUserService.getCurrentUserId(),
+                LocalDate.parse(date));
     }
 
     public record LogMealRequest(
-        FoodDto food,
-        Double quantity,
-        String mealName,
-        Long userMealId,
-        LocalDateTime consumedAt
-    ) {}
+            FoodDto food,
+            Double quantity,
+            String mealName,
+            Long userMealId,
+            LocalDateTime consumedAt) {
+    }
 
     @PostMapping
     public MealLogDto logMeal(@RequestBody LogMealRequest request) {
         return mealLogService.logMeal(
-            currentUserService.getCurrentUserId(), 
-            request.food(), 
-            request.quantity(),
-            request.mealName(),
-            request.userMealId(),
-            request.consumedAt()
-        );
+                currentUserService.getCurrentUserId(),
+                request.food(),
+                request.quantity(),
+                request.mealName(),
+                request.userMealId(),
+                request.consumedAt());
     }
 
     @DeleteMapping("/{id}")
@@ -71,27 +68,27 @@ public class MealLogController {
         return userMealService.getUserMeals(currentUserService.getCurrentUserId());
     }
 
-    public record CreateUserMealRequest(String name, Integer displayOrder) {}
+    public record CreateUserMealRequest(String name, Integer displayOrder) {
+    }
 
     @PostMapping("/config")
     public UserMealDto createMealConfig(@RequestBody CreateUserMealRequest request) {
         return userMealService.addMeal(
-            currentUserService.getCurrentUserId(),
-            request.name(),
-            request.displayOrder()
-        );
+                currentUserService.getCurrentUserId(),
+                request.name(),
+                request.displayOrder());
     }
 
-    public record UpdateUserMealRequest(String name, Integer displayOrder) {}
+    public record UpdateUserMealRequest(String name, Integer displayOrder) {
+    }
 
     @PutMapping("/config/{id}")
     public UserMealDto updateMealConfig(@PathVariable Long id, @RequestBody UpdateUserMealRequest request) {
         return userMealService.updateMeal(
-            currentUserService.getCurrentUserId(),
-            id,
-            request.name(),
-            request.displayOrder()
-        );
+                currentUserService.getCurrentUserId(),
+                id,
+                request.name(),
+                request.displayOrder());
     }
 
     @DeleteMapping("/config/{id}")
@@ -100,13 +97,13 @@ public class MealLogController {
         return ResponseEntity.noContent().build();
     }
 
-    public record ReorderMealsRequest(List<Long> orderedMealIds) {}
+    public record ReorderMealsRequest(List<Long> orderedMealIds) {
+    }
 
     @PutMapping("/config/reorder")
     public List<UserMealDto> reorderMealConfigs(@RequestBody ReorderMealsRequest request) {
         return userMealService.reorderMeals(
-            currentUserService.getCurrentUserId(),
-            request.orderedMealIds()
-        );
+                currentUserService.getCurrentUserId(),
+                request.orderedMealIds());
     }
 }

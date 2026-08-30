@@ -121,12 +121,10 @@ docker run -p 8080:8080 \
 
 ---
 
-## 🚢 Deploying to Dokploy (Production)
-
-To deploy to **Dokploy**:
+## 🚢 Example of deploying to a host like Dokploy
 
 1. Create a new **PostgreSQL Database** in Dokploy named `whatafridge` and retrieve its internal connection string.
-2. Run the queries in [`schema.sql`](file:///d:/repos/what-a-fridge/backend/src/main/resources/schema.sql) manually on the database using a client like DBeaver (Hibernate is set to `validate` in production, meaning it will not auto-generate tables).
+2. Run the queries in [`schema.sql`](file:///d:/repos/what-a-fridge/backend/src/main/resources/schema.sql) manually on the database using a client like DBeaver (Hibernate is set to `validate` in production, meaning it will not auto-generate tables). You can also use the terminal inside the postgres container you created for the db, just login on psql and paste the schema.sql content there.
 3. Create a new **Application** in Dokploy named `whatafridge-backend` and link it to your git repository.
 4. Set the **Build Provider** to **Dockerfile**.
 5. Add the necessary production environment variables in the **Environment** tab:
@@ -139,5 +137,5 @@ To deploy to **Dokploy**:
    - `JWT_SECRET=<secure-random-string>`
    - `CORS_ALLOWED_ORIGINS=https://app.yourdomain.com`
    - `OFF_CONTACT_EMAIL=yourname@example.com`
-6. Add your backend domain (e.g. `api.yourdomain.com`) in the **Domains** tab and map it to **Container Port** `8080`.
+6. (Optional) Add your backend domain (e.g. `api.yourdomain.com`) in the **Domains** tab and map it to **Container Port** `8080`.
 7. Trigger a deployment.
