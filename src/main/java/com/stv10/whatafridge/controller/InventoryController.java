@@ -38,7 +38,8 @@ public class InventoryController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteItem(@PathVariable Long id) {
-        inventoryService.deleteItem(id);
+    public org.springframework.http.ResponseEntity<Void> deleteItem(@PathVariable Long id) {
+        inventoryService.deleteItem(currentUserService.getCurrentUserId(), id);
+        return org.springframework.http.ResponseEntity.noContent().build();
     }
 }

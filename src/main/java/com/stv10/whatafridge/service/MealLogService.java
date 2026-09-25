@@ -50,7 +50,7 @@ public class MealLogService {
     public MealLogDto logMeal(UUID userId, FoodDto foodDto, Double quantity, String mealName, Long userMealId, LocalDateTime consumedAt) {
         User user = userRepo.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found: " + userId));
-        Food food = foodService.getOrCreateFromDto(foodDto);
+        Food food = foodService.getOrCreateFromDto(foodDto, user);
 
         UserMeal userMeal = null;
         if (userMealId != null) {

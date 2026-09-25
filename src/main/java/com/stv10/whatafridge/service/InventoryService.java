@@ -8,6 +8,8 @@ import com.stv10.whatafridge.repository.InventoryItemRepository;
 import com.stv10.whatafridge.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
@@ -24,13 +26,15 @@ public class InventoryService {
         this.foodService = foodService;
     }
 
+    @Transactional(readOnly = true)
     public List<InventoryItem> getUserInventory(UUID userId) {
         return inventoryRepo.findByUserId(userId);
     }
 
+    @Transactional
     public InventoryItem addItem(UUID userId, FoodDto foodDto, Double quantity, LocalDate expirationDate) {
-        User user = userRepo.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
-        Food food = foodService.getOrCreateFromDto(foodDto);
+        User user = userRepo.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found: " + userId));
+        Food food = foodService.getOrCreateFromDto(foodDto, user);
 
         InventoryItem item = InventoryItem.builder()
                 .user(user)
@@ -41,7 +45,10 @@ public class InventoryService {
         return inventoryRepo.save(item);
     }
     
-    public void deleteItem(Long itemId) {
-        inventoryRepo.deleteById(itemId);
+    @Transactional
+    public void deleteItem(UUID userId, Long itemId) {
+        InventoryItem item = inventoryRepo.findByIdAndUserId(itemId, userId)
+                .orElseThrow(() -> new IllegalArgumentException("Inventory item not found: " + itemId));
+        inventoryRepo.delete(item);
     }
 }

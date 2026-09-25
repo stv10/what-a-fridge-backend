@@ -15,6 +15,10 @@ public class Food {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
     // The Open Food Facts ID (barcode) or null if custom food
     @Column(name = "open_food_facts_id", unique = true)
     private String openFoodFactsId;

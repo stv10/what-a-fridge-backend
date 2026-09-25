@@ -6,6 +6,7 @@ import com.stv10.whatafridge.config.OpenFoodFactsProperties;
 import com.stv10.whatafridge.domain.Food;
 import com.stv10.whatafridge.dto.FoodDto;
 import com.stv10.whatafridge.repository.FoodRepository;
+import com.stv10.whatafridge.domain.User;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class OpenFoodFactsService {
@@ -43,11 +45,20 @@ public class OpenFoodFactsService {
     }
 
     public List<FoodDto> searchByText(String query) {
+        return searchByText(query, null);
+    }
+
+    public List<FoodDto> searchByText(String query, UUID userId) {
         if (query == null || query.isBlank()) {
             return Collections.emptyList();
         }
         
-        List<Food> localFoods = foodRepository.findByNameContainingIgnoreCase(query);
+        List<Food> localFoods;
+        if (userId != null) {
+            localFoods = foodRepository.searchByNameAndUser(query, userId);
+        } else {
+            localFoods = foodRepository.findByNameContainingIgnoreCaseAndUserIsNull(query);
+        }
         List<FoodDto> results = new ArrayList<>();
         for (Food food : localFoods) {
             results.add(FoodDto.fromEntity(food));
@@ -131,9 +142,14 @@ public class OpenFoodFactsService {
     }
 
     public Food getOrCreateFromDto(FoodDto dto) {
+        return getOrCreateFromDto(dto, null);
+    }
+
+    public Food getOrCreateFromDto(FoodDto dto, User user) {
         if (dto.getOpenFoodFactsId() == null) {
-            // It's a custom food, just save it
+            // It's a custom food, save it associated with the user
             return foodRepository.save(Food.builder()
+                    .user(user)
                     .name(dto.getName())
                     .calories(dto.getCalories() != null ? dto.getCalories() : 0.0)
                     .protein(dto.getProtein() != null ? dto.getProtein() : 0.0)
